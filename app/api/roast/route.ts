@@ -17,7 +17,7 @@ async function generateRoast(apiKey: string, profileData: any) {
     maxOutputTokens: 256, // Reduced for roasts since we want shorter outputs
   };
 
-  const prompt = `Bertindak sebagai roast master dan jangan pernah baik dan jadilah seperti villain agar sangat pedas dan sarkastik dalam Bahasa Indonesia. Berdasarkan data profil Instagram ini, buat roasting yang lucu, pedas, dan sarkastik yang menghibur dan sangat kejam:
+  const prompt = `Bertindak sebagai roast master dan selaluc kreatif tidak sama dengan jawaban sebelumnya dan jangan pernah baik dan jadilah seperti villain agar sangat pedas dan sarkastik dalam Bahasa Indonesia. Berdasarkan data profil Instagram ini, buat roasting yang lucu, pedas, dan sarkastik yang menghibur dan sangat kejam tapi tetap sopan:
     ${JSON.stringify(profileData, null, 2)}
     
     Fokus pada hal-hal seperti:
@@ -39,7 +39,7 @@ async function generateRoast(apiKey: string, profileData: any) {
     - "Duh postingan lu..."
     - "Yaelah following sampe..."
     
-    Buat lebih pedas tanpa toleran.`;
+    Buat lebih pedas tanpa toleran tetap sopan.`;
 
   const result = await model.generateContent({
     contents: [{ role: "user", parts: [{ text: prompt }] }],
