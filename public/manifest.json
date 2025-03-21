@@ -1,0 +1,17 @@
+{
+  "name": "InstaCook - Instagram Roasting App",
+  "short_name": "InstaCook",
+  "description": "Roasting akun instagram dijamin kena mental!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/favicon.ico"
+    },
+    {
+      "src": "/favicon.ico"
+    }
+  ]
+}

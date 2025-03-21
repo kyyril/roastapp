@@ -15,6 +15,21 @@ const balsamiq = Balsamiq_Sans({
 export const metadata: Metadata = {
   title: "InstaCook - Instagram Profile Roaster",
   description: "Roast Instagram profiles with AI-powered humor",
+  icons: {
+    icon: [
+      {
+        url: "/favicon.ico",
+        sizes: "32x32",
+      },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [
+      {
+        url: "/apple-touch-icon.png",
+        sizes: "180x180",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -27,7 +42,6 @@ export default function RootLayout({
       <body className={`${inter.className} ${balsamiq.variable}`}>
         <ToastProviders>
           {children}
-
           <Analytics />
         </ToastProviders>
       </body>
