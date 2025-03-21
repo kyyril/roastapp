@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { ProfileSkeleton, RoastingSkeleton } from "@/components/Skeleton";
 import { Watermark } from "@/components/Watermark";
 import toast from "react-hot-toast";
+import { FeatureCards } from "@/components/FeatureCard";
 
 interface ProfileData {
   username: string;
@@ -133,13 +134,67 @@ export default function Home() {
   const handleDownloadImage = async () => {
     if (!resultRef.current) return;
     try {
-      const dataUrl = await htmlToImage.toPng(resultRef.current);
+      const color1 = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+      const color2 = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+
+      // Create a wrapper with responsive dimensions
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = window.innerWidth < 640 ? "16px" : "32px";
+      wrapper.style.background = `linear-gradient(to bottom right, ${color1}, ${color2})`;
+      wrapper.style.borderRadius = "16px";
+      wrapper.style.width = window.innerWidth < 640 ? "100%" : "800px";
+      wrapper.style.margin = "0 auto";
+
+      // Clone the content
+      const clone = resultRef.current.cloneNode(true) as HTMLElement;
+
+      // Remove watermark from clone
+      const watermark = clone.querySelector('[data-watermark="true"]');
+      if (watermark?.parentNode) {
+        watermark.parentNode.removeChild(watermark);
+      }
+
+      // Fix image sources in the clone
+      const images = clone.getElementsByTagName("img");
+      for (let img of Array.from(images)) {
+        if (img.src.startsWith("data:")) continue;
+        const absoluteUrl = new URL(img.src, window.location.origin).href;
+        img.src = absoluteUrl;
+      }
+
+      wrapper.appendChild(clone);
+      document.body.appendChild(wrapper);
+
+      // Generate image with better quality and wait for images to load
+      await Promise.all(
+        Array.from(wrapper.getElementsByTagName("img")).map(
+          (img) =>
+            new Promise((resolve) => {
+              if (img.complete) resolve(null);
+              else img.onload = () => resolve(null);
+            })
+        )
+      );
+
+      const dataUrl = await htmlToImage.toPng(wrapper, {
+        quality: 1.0,
+        pixelRatio: window.devicePixelRatio || 2,
+        backgroundColor: "#1a1a1a",
+        skipAutoScale: true,
+      });
+
+      // Cleanup
+      document.body.removeChild(wrapper);
+
+      // Download
       const link = document.createElement("a");
       link.download = `roastgram-${username}.png`;
       link.href = dataUrl;
       link.click();
+
       toast.success("Gambar berhasil didownload!");
     } catch (err) {
+      console.error(err);
       toast.error("Gagal download gambar");
     }
   };
@@ -306,6 +361,7 @@ export default function Home() {
             </motion.div>
           )}
         </Card>
+        <FeatureCards />
       </motion.div>
     </div>
   );
