@@ -14,11 +14,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { toast } from "sonner";
 import NextImage from "next/image";
 import * as htmlToImage from "html-to-image";
 import { cn } from "@/lib/utils";
-import { ProfileSkeleton } from "@/components/Skeleton";
+import { ProfileSkeleton, RoastingSkeleton } from "@/components/Skeleton";
+import { Watermark } from "@/components/Watermark";
+import toast from "react-hot-toast";
 
 interface ProfileData {
   username: string;
@@ -32,35 +33,10 @@ interface ProfileData {
   isVerified: boolean;
 }
 
-const Watermark = () => (
-  <div className="mt-4 flex items-center justify-between text-black/50 text-sm border-t border-black/10 pt-4">
-    <div className="flex items-center gap-1">
-      <Flame size={16} className="text-orange-400" />
-      <span className="font-balsamiq">INSTACOOK</span>
-    </div>
-    <div className="flex flex-row items-center gap-2 hover:opacity-50">
-      <a
-        href="https://github.com/kyyril"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:text-black/50 transition-colors flex items-center gap-1 font-balsamiq"
-      >
-        <NextImage
-          src={"/images/katou.jpeg"}
-          alt="owner"
-          className="rounded-full"
-          width={16}
-          height={16}
-        />
-        kyyril
-      </a>
-    </div>
-  </div>
-);
-
 export default function Home() {
   const [username, setUsername] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+  const [loadingRoast, setLoadingRoast] = useState(false);
   const [roast, setRoast] = useState("");
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
@@ -71,7 +47,8 @@ export default function Home() {
       return;
     }
 
-    setLoading(true);
+    setLoadingProfile(true);
+    setLoadingRoast(false);
     setRoast("");
     setProfileData(null);
 
@@ -96,6 +73,10 @@ export default function Home() {
       }
 
       setProfileData(data);
+      setLoadingProfile(false);
+
+      // Start loading roast
+      setLoadingRoast(true);
 
       // Generate roast
       const roastResponse = await fetch("/api/roast", {
@@ -134,7 +115,8 @@ export default function Home() {
         error instanceof Error ? error.message : "Ada yang salah! Coba lagi ya."
       );
     } finally {
-      setLoading(false);
+      setLoadingProfile(false);
+      setLoadingRoast(false);
     }
   };
 
@@ -164,8 +146,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen text-foreground relative p-4 sm:p-8">
-      <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
-
+      <div className="absolute inset-0 -z-10 h-full w-full  bg-[radial-gradient(#707070_1px,transparent_1px)] [background-size:16px_16px]"></div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -179,11 +160,11 @@ export default function Home() {
           >
             <Flame size={32} className="sm:w-12 sm:h-12" />
           </motion.div>
-          <h1 className="text-4xl font-balsamiq-bold sm:text-6xl font-black mb-2 sm:mb-4 text-primary animate-pulse">
-            INSTACOOK🔥
+          <h1 className="text-4xl font-balsamiq sm:text-6xl font-black mb-2 sm:mb-4 text-primary ">
+            INSTACOOK<span className="animate-pulse">🔥</span>
           </h1>
-          <p className="text-xl sm:text-2xl font-medium mb-2 ">
-            Roasting pedas dijamin kena mental!💀
+          <p className="text-xl sm:text-2xl font-medium mb-2 font-balsamiq ">
+            Roasting akun instagram dijamin kena mental!💀
           </p>
         </div>
 
@@ -195,20 +176,24 @@ export default function Home() {
                 placeholder="Masukkan username Instagram"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="retro-input pl-12 w-full"
+                className="retro-input pl-12 w-full font-balsamiq"
               />
             </div>
             <Button
               onClick={handleRoast}
-              disabled={loading}
-              className="retro-button w-full sm:w-auto"
+              disabled={loadingProfile || loadingRoast}
+              className="retro-button w-full sm:w-auto font-balsamiq"
             >
-              {loading ? <Loader2 className="animate-spin" /> : "Roasting!"}
+              {loadingProfile ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Roasting!"
+              )}
             </Button>
           </div>
 
           <div ref={resultRef}>
-            {loading ? (
+            {loadingProfile ? (
               <ProfileSkeleton />
             ) : (
               profileData && (
@@ -231,34 +216,40 @@ export default function Home() {
                       </div>
                     )}
                     <div>
-                      <h2 className="text-2xl font-bold flex items-center gap-2">
+                      <h2 className="text-2xl font-bold flex items-center gap-2 font-balsamiq">
                         {profileData.fullName}
                         {profileData.isVerified && (
                           <span className="text-blue-400">✓</span>
                         )}
                       </h2>
-                      <p className="text-black/60">@{profileData.username}</p>
+                      <p className="text-black/60 font-balsamiq">
+                        @{profileData.username}
+                      </p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-3 gap-4 mb-4 text-center">
                     <div className="bg-white/5 p-3 rounded-lg">
                       <Image className="w-5 h-5 mx-auto mb-1" />
-                      <div className="text-lg font-bold">
+                      <div className="text-lg font-bold font-balsamiq">
                         {profileData.postsCount}
                       </div>
-                      <div className="text-sm text-black/60">Post</div>
+                      <div className="text-sm text-black/60 font-balsamiq">
+                        Post
+                      </div>
                     </div>
                     <div className="bg-white/5 p-3 rounded-lg">
                       <Users className="w-5 h-5 mx-auto mb-1" />
-                      <div className="text-lg font-bold">
+                      <div className="text-lg font-bold font-balsamiq">
                         {profileData.followersCount}
                       </div>
-                      <div className="text-sm text-black/60">Followers</div>
+                      <div className="text-sm text-black/60 font-balsamiq">
+                        Followers
+                      </div>
                     </div>
                     <div className="bg-white/5 p-3 rounded-lg">
                       <Link2 className="w-5 h-5 mx-auto mb-1" />
-                      <div className="text-lg font-bold">
+                      <div className="text-lg font-bold font-balsamiq">
                         {profileData.followsCount}
                       </div>
                       <div className="text-sm text-black/60">Following</div>
@@ -266,7 +257,7 @@ export default function Home() {
                   </div>
 
                   {profileData.biography && (
-                    <p className="text-black/50 whitespace-pre-line">
+                    <p className="text-black/50 whitespace-pre-line font-balsamiq">
                       {profileData.biography}
                     </p>
                   )}
@@ -274,24 +265,8 @@ export default function Home() {
               )
             )}
 
-            {loading ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-card p-6 rounded-lg retro-border"
-              >
-                <div className="space-y-3">
-                  {[...Array(4)].map((_, i) => (
-                    <div
-                      key={i}
-                      className={cn(
-                        "h-4 bg-white/10 rounded animate-pulse",
-                        i === 3 && "w-3/4"
-                      )}
-                    />
-                  ))}
-                </div>
-              </motion.div>
+            {loadingRoast ? (
+              <RoastingSkeleton />
             ) : (
               roast && (
                 <motion.div
@@ -299,7 +274,7 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   className="bg-card p-6 rounded-lg retro-border"
                 >
-                  <p className="text-lg leading-relaxed whitespace-pre-line">
+                  <p className="text-lg leading-relaxed whitespace-pre-line font-balsamiq">
                     {roast}
                   </p>
                   <Watermark />
@@ -316,14 +291,14 @@ export default function Home() {
             >
               <Button
                 onClick={handleCopyText}
-                className="retro-button bg-secondary text-secondary-foreground"
+                className="retro-button bg-secondary text-secondary-foreground font-balsamiq"
               >
                 <Copy className="w-4 h-4 mr-2" />
                 Copy
               </Button>
               <Button
                 onClick={handleDownloadImage}
-                className="retro-button bg-secondary text-secondary-foreground"
+                className="retro-button bg-secondary text-secondary-foreground font-balsamiq"
               >
                 <Download className="w-4 h-4 mr-2" />
                 Download

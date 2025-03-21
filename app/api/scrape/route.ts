@@ -1,4 +1,24 @@
 import { NextResponse } from "next/server";
+import { ApifyClient } from "apify-client";
+
+// Define InstagramProfile type if not already defined elsewhere
+interface InstagramProfile {
+  username: string;
+  fullName: string;
+  biography: string;
+  profilePicUrl: string;
+  postsCount: number;
+  followersCount: number;
+  followsCount: number;
+  isPrivate: boolean;
+  isVerified: boolean;
+  recentPosts: {
+    caption: string;
+    likesCount: number;
+    commentsCount: number;
+    imageUrl: string;
+  }[];
+}
 
 export async function POST(req: Request) {
   try {
@@ -11,40 +31,67 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log("Fetching data for username:", username);
+    const client = new ApifyClient({
+      token: process.env.APIFY_API_TOKEN || "",
+    });
 
-    const response = await fetch(
-      `https://api.apify.com/v2/actor-tasks/kyyril~all-scrap/run-sync-get-dataset-items`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.APIFY_API_TOKEN}`,
-        },
-        body: JSON.stringify({
-          username,
-          searchType: "user",
-          searchLimit: 1,
-        }),
-      }
-    );
+    // Prepare Actor input
+    const input = {
+      directUrls: [`https://www.instagram.com/${username}/`],
+      resultsType: "details",
+      resultsLimit: 1,
+    };
 
-    if (!response.ok) {
-      console.error("Apify API error:", response.status, await response.text());
-      throw new Error(`Apify API error: ${response.status}`);
+    // Run the Actor and wait for it to finish
+    const run = await client.actor("apify/instagram-scraper").call(input);
+
+    // Fetch data from the run's dataset
+    const { items } = await client.dataset(run.defaultDatasetId).listItems();
+
+    if (!items || items.length === 0) {
+      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
     }
 
-    const data = await response.json();
-    console.log("Scraped data:", JSON.stringify(data, null, 2));
+    const profileData: any = items[0];
 
-    if (!data || data.length === 0) {
+    // Parse and format the profile data
+    const profile: InstagramProfile = {
+      username: profileData.username || username,
+      fullName: profileData.fullName || "",
+      biography: profileData.biography || "",
+      profilePicUrl: formatImageUrl(profileData.profilePicUrl) || "",
+      postsCount: profileData.postsCount || 0,
+      followersCount: profileData.followersCount || 0,
+      followsCount: profileData.followsCount || 0,
+      isPrivate: profileData.isPrivate || false,
+      isVerified: profileData.isVerified || false,
+      recentPosts: (profileData.latestPosts || [])
+        .slice(0, 5)
+        .map((post: any) => ({
+          caption: post.caption || "",
+          likesCount: post.likesCount || 0,
+          commentsCount: post.commentsCount || 0,
+          imageUrl: formatImageUrl(post.imageUrl) || "",
+        })),
+    };
+
+    // Check if profile is empty
+    const isProfileEmpty =
+      profile.postsCount === 0 &&
+      profile.followersCount === 0 &&
+      profile.followsCount === 0 &&
+      !profile.fullName &&
+      !profile.biography &&
+      !profile.profilePicUrl;
+
+    if (isProfileEmpty) {
       return NextResponse.json(
-        { error: "No profile data found" },
+        { error: "Profile not found or invalid" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(data[0]); // Return first profile found
+    return NextResponse.json(profile);
   } catch (error) {
     console.error("Scrape error:", error);
     return NextResponse.json(
@@ -52,4 +99,14 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+}
+
+function formatImageUrl(url: string): string {
+  if (!url) return "";
+
+  if (!url.startsWith("http")) {
+    return "";
+  }
+
+  return `/api/image-proxy?url=${encodeURIComponent(url)}`;
 }

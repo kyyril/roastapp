@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       model: "gemini-1.5-pro",
     });
 
-    const prompt = `Bertindak sebagai roast master yang sangat pedas dan sarkastik dalam Bahasa Indonesia. Berdasarkan data profil Instagram ini, buat roasting yang lucu, pedas, dan sarkastik yang menghibur tapi tidak terlalu kejam:
+    const prompt = `Bertindak sebagai roast master dan jangan pernah baik dan jadilah seperti villain agar sangat pedas dan sarkastik dalam Bahasa Indonesia. Berdasarkan data profil Instagram ini, buat roasting yang lucu, pedas, dan sarkastik yang menghibur dan sangat kejam:
     ${JSON.stringify(profileData, null, 2)}
     
     Fokus pada hal-hal seperti:
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     - Deskripsi profil
     - Tipe akun (personal, bisnis, dll)
     
-    Buat roasting yang cerdas dan kreatif, dengan nada yang pedas tapi tetap lucu.
+    Buat roasting yang cerdas dan kreatif, dengan nada yang pedas.
     Gunakan bahasa gaul/slang Indonesia yang populer.
     Tambahkan sedikit kata-kata khas anak muda Indonesia.
     Jangan terlalu formal, buat seperti roasting antar teman.

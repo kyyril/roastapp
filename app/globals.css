@@ -81,24 +81,20 @@
 
 .font-balsamiq {
   font-family: var(--font-balsamiq);
-  font-weight: 400;
   font-style: normal;
 }
 
 .font-balsamiq-bold {
   font-family: var(--font-balsamiq);
-  font-weight: 700;
   font-style: normal;
 }
 
 .font-balsamiq-italic {
   font-family: var(--font-balsamiq);
-  font-weight: 400;
   font-style: italic;
 }
 
 .font-balsamiq-bold-italic {
   font-family: var(--font-balsamiq);
-  font-weight: 700;
   font-style: italic;
 }

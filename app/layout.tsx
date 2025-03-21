@@ -1,3 +1,5 @@
+import { Analytics } from "@vercel/analytics/next";
+import { ToastProviders } from "@/components/ToastProvider";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter, Balsamiq_Sans } from "next/font/google";
@@ -23,7 +25,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} ${balsamiq.variable}`}>
-        {children}
+        <ToastProviders>
+          {children}
+
+          <Analytics />
+        </ToastProviders>
       </body>
     </html>
   );
