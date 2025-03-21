@@ -202,7 +202,7 @@ export default function Home() {
   return (
     <div className="min-h-screen text-foreground relative p-4 sm:p-8">
       <div className="absolute inset-0 -z-10 h-full w-full  bg-[radial-gradient(#cccccc_1px,transparent_1px)] [background-size:16px_16px]"></div>
-      <div className="mt-10"></div>
+      <div className="mt-11"></div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
