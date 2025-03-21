@@ -7,7 +7,7 @@ const API_KEY_2 = process.env.GEMINI_API_KEY_2;
 async function generateRoast(apiKey: string, profileData: any) {
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash-8b",
+    model: "gemini-2.0-flash",
   });
 
   const generationConfig = {
@@ -17,29 +17,38 @@ async function generateRoast(apiKey: string, profileData: any) {
     maxOutputTokens: 256, // Reduced for roasts since we want shorter outputs
   };
 
-  const prompt = `Bertindak sebagai roast master dan selaluc kreatif tidak sama dengan jawaban sebelumnya dan jangan pernah baik dan jadilah seperti villain agar sangat pedas dan sarkastik dalam Bahasa Indonesia. Berdasarkan data profil Instagram ini, buat roasting yang lucu, pedas, dan sarkastik yang menghibur dan sangat kejam tapi tetap sopan:
-    ${JSON.stringify(profileData, null, 2)}
-    
-    Fokus pada hal-hal seperti:
-    - Isi bio mereka (jika ada)
-    - Jumlah postingan
-    - Jumlah followers dan following
-    - Deskripsi profil
-    - Tipe akun (personal, bisnis, dll)
-    
-    Buat roasting yang cerdas dan kreatif, dengan nada yang pedas.
-    Gunakan bahasa gaul/slang Indonesia yang populer.
-    Tambahkan sedikit kata-kata khas anak muda Indonesia.
-    Jangan terlalu formal, buat seperti roasting antar teman.
-    Maksimal 150 kata dan buat menghibur.
-    
-    Contoh gaya bahasa yang bisa digunakan:
-    - "Njir followers lu..."
-    - "Astagaa bio lu tuh..."
-    - "Duh postingan lu..."
-    - "Yaelah following sampe..."
-    
-    Buat lebih pedas tanpa toleran tetap sopan.`;
+  const prompt = `Kamu adalah roast master yang ahli dalam membuat roasting yang pedas namun tetap sopan. Buatkan roasting berdasarkan data profil Instagram ini:
+${JSON.stringify(profileData, null, 2)}
+
+Aturan roasting:
+1. Gunakan Bahasa Indonesia gaul/slang kekinian
+2. Fokus pada analisis dan kritik terhadap:
+   - Jumlah followers vs following ratio
+   - Kualitas & kuantitas postingan
+   - Gaya penulisan bio
+   - Pemilihan foto profil
+   - Keaktifan akun
+
+Format output:
+- hanya 1 paragraf 
+- Panjang: Maksimal 125 kata
+- Gaya: Sarkastik tapi cerdas
+- Nada: Seperti teman yang sedang roasting
+- Hindari: Kata kasar, SARA, atau bullying
+
+Contoh tone roasting:
+- "Aduhay, followers segitu doang udah verified?"
+- "Bio lu kek anak Twitter 2014 anjir"
+- "Matematika gampang: following > followers = desperate"
+- "Postingan dikit banget, kuota abis apa gimana?"
+
+Yang harus dihindari:
+- Tidak boleh ada kata kasar/toxic
+- Tidak menyinggung SARA
+- Tidak body shaming
+- Tidak membully
+
+Berikan roasting yang tajam, jenaka, dan menghibur namun tetap dalam batas sopan.`;
 
   const result = await model.generateContent({
     contents: [{ role: "user", parts: [{ text: prompt }] }],
