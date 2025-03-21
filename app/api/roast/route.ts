@@ -7,8 +7,15 @@ const API_KEY_2 = process.env.GEMINI_API_KEY_2;
 async function generateRoast(apiKey: string, profileData: any) {
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-pro",
+    model: "gemini-1.5-flash-8b",
   });
+
+  const generationConfig = {
+    temperature: 0.7,
+    topP: 0.95,
+    topK: 40,
+    maxOutputTokens: 256, // Reduced for roasts since we want shorter outputs
+  };
 
   const prompt = `Bertindak sebagai roast master dan jangan pernah baik dan jadilah seperti villain agar sangat pedas dan sarkastik dalam Bahasa Indonesia. Berdasarkan data profil Instagram ini, buat roasting yang lucu, pedas, dan sarkastik yang menghibur dan sangat kejam:
     ${JSON.stringify(profileData, null, 2)}
@@ -34,7 +41,11 @@ async function generateRoast(apiKey: string, profileData: any) {
     
     Buat lebih pedas tanpa toleran.`;
 
-  const result = await model.generateContent(prompt);
+  const result = await model.generateContent({
+    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    generationConfig,
+  });
+
   const response = await result.response;
   return response.text();
 }
