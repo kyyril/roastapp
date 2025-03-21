@@ -201,7 +201,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen text-foreground relative p-4 sm:p-8">
-      <div className="absolute inset-0 -z-10 h-full w-full  bg-[radial-gradient(#707070_1px,transparent_1px)] [background-size:16px_16px]"></div>
+      <div className="absolute inset-0 -z-10 h-full w-full  bg-[radial-gradient(#cccccc_1px,transparent_1px)] [background-size:16px_16px]"></div>
+      <div className="mt-10"></div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -223,7 +224,7 @@ export default function Home() {
           </p>
         </div>
 
-        <Card className="retro-border bg-card p-4 sm:p-8">
+        <Card className="retro-border bg-card p-4 sm:p-8 mb-20">
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <div className="relative flex-1">
               <Input
@@ -255,64 +256,66 @@ export default function Home() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-8 bg-card p-6 rounded-lg retro-border"
+                  className="mb-8 bg-card p-4 sm:p-6 rounded-lg retro-border"
                 >
-                  <div className="flex items-center gap-6 mb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 mb-4">
                     {profileData.profilePicUrl && (
-                      <div className="relative w-20 h-20 rounded-full border-2 border-white/20 overflow-hidden">
+                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/20 overflow-hidden">
                         <NextImage
                           src={profileData.profilePicUrl}
                           alt={profileData.username}
                           fill
                           className="object-cover"
-                          sizes="80px"
+                          sizes="(max-width: 640px) 64px, 80px"
                           priority
                         />
                       </div>
                     )}
                     <div>
-                      <h2 className="text-2xl font-bold flex items-center gap-2 font-balsamiq">
+                      <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2 font-balsamiq">
                         {profileData.fullName}
                         {profileData.isVerified && (
                           <span className="text-blue-400">✓</span>
                         )}
                       </h2>
-                      <p className="text-black/60 font-balsamiq">
+                      <p className="text-black/60 text-sm sm:text-base font-balsamiq">
                         @{profileData.username}
                       </p>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4 mb-4 text-center">
-                    <div className="bg-white/5 p-3 rounded-lg">
-                      <Image className="w-5 h-5 mx-auto mb-1" />
-                      <div className="text-lg font-bold font-balsamiq">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 text-center">
+                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg">
+                      <Image className="w-4 h-4 sm:w-5 sm:h-5 mx-auto mb-1" />
+                      <div className="text-base sm:text-lg font-bold font-balsamiq">
                         {profileData.postsCount}
                       </div>
-                      <div className="text-sm text-black/60 font-balsamiq">
+                      <div className="text-xs sm:text-sm text-black/60 font-balsamiq">
                         Post
                       </div>
                     </div>
-                    <div className="bg-white/5 p-3 rounded-lg">
-                      <Users className="w-5 h-5 mx-auto mb-1" />
-                      <div className="text-lg font-bold font-balsamiq">
+                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg">
+                      <Users className="w-4 h-4 sm:w-5 sm:h-5 mx-auto mb-1" />
+                      <div className="text-base sm:text-lg font-bold font-balsamiq">
                         {profileData.followersCount}
                       </div>
-                      <div className="text-sm text-black/60 font-balsamiq">
+                      <div className="text-xs sm:text-sm text-black/60 font-balsamiq">
                         Followers
                       </div>
                     </div>
-                    <div className="bg-white/5 p-3 rounded-lg">
-                      <Link2 className="w-5 h-5 mx-auto mb-1" />
-                      <div className="text-lg font-bold font-balsamiq">
+                    <div className="bg-white/5 p-2 sm:p-3 rounded-lg">
+                      <Link2 className="w-4 h-4 sm:w-5 sm:h-5 mx-auto mb-1" />
+                      <div className="text-base sm:text-lg font-bold font-balsamiq">
                         {profileData.followsCount}
                       </div>
-                      <div className="text-sm text-black/60">Following</div>
+                      <div className="text-xs sm:text-sm text-black/60 font-balsamiq">
+                        Following
+                      </div>
                     </div>
                   </div>
 
                   {profileData.biography && (
-                    <p className="text-black/50 whitespace-pre-line font-balsamiq">
+                    <p className="text-sm sm:text-base text-black/70 whitespace-pre-line font-balsamiq">
                       {profileData.biography}
                     </p>
                   )}

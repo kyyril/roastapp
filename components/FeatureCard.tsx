@@ -16,7 +16,7 @@ const FeatureCard = ({
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay }}
-    className="bg-card p-6 rounded-lg retro-border mt-10 text-center"
+    className="bg-card p-6 rounded-lg retro-border text-center"
   >
     <div className="inline-block bg-primary/10 p-3 rounded-lg mb-4">
       <Icon className="w-6 h-6 text-primary" />
@@ -27,7 +27,13 @@ const FeatureCard = ({
 );
 
 export const FeatureCards = () => (
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <FeatureCard
+      icon={Cpu}
+      title="AI Cooked"
+      description="Dibuat dengan teknologi Artipisial intelejen"
+      delay={0.3}
+    />
     <FeatureCard
       icon={Zap}
       title="Super Cepat"
@@ -39,12 +45,6 @@ export const FeatureCards = () => (
       title="Roast Pedas"
       description="Dibuat untuk membuat mental terbakar hingga gosong"
       delay={0.2}
-    />
-    <FeatureCard
-      icon={Cpu}
-      title="AI Cooked"
-      description="Dibuat dengan teknologi Artipisial intelejen"
-      delay={0.3}
     />
   </div>
 );
