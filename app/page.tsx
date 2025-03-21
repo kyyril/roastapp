@@ -4,14 +4,12 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Flame,
-  Instagram,
   Loader2,
   Users,
   Image,
   Link2,
   Copy,
   Download,
-  Share2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,18 +17,46 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import NextImage from "next/image";
 import * as htmlToImage from "html-to-image";
+import { cn } from "@/lib/utils";
+import { ProfileSkeleton } from "@/components/Skeleton";
 
 interface ProfileData {
   username: string;
   fullName: string;
   biography: string;
   followersCount: number;
-  followingCount: number;
+  followsCount: number;
   postsCount: number;
   profilePicUrl: string;
   isPrivate: boolean;
   isVerified: boolean;
 }
+
+const Watermark = () => (
+  <div className="mt-4 flex items-center justify-between text-black/50 text-sm border-t border-black/10 pt-4">
+    <div className="flex items-center gap-1">
+      <Flame size={16} className="text-orange-400" />
+      <span className="font-balsamiq">INSTACOOK</span>
+    </div>
+    <div className="flex flex-row items-center gap-2 hover:opacity-50">
+      <a
+        href="https://github.com/kyyril"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-black/50 transition-colors flex items-center gap-1 font-balsamiq"
+      >
+        <NextImage
+          src={"/images/katou.jpeg"}
+          alt="owner"
+          className="rounded-full"
+          width={16}
+          height={16}
+        />
+        kyyril
+      </a>
+    </div>
+  </div>
+);
 
 export default function Home() {
   const [username, setUsername] = useState("");
@@ -136,30 +162,8 @@ export default function Home() {
     }
   };
 
-  const handleShare = async () => {
-    if (!resultRef.current) return;
-    try {
-      const dataUrl = await htmlToImage.toPng(resultRef.current);
-      const blob = await (await fetch(dataUrl)).blob();
-      const file = new File([blob], "roastgram.png", { type: "image/png" });
-
-      if (navigator.share) {
-        await navigator.share({
-          title: "Roasting Instagram Gue",
-          text: roast,
-          files: [file],
-        });
-        toast.success("Berhasil dibagikan!");
-      } else {
-        throw new Error("Fitur berbagi tidak didukung");
-      }
-    } catch (err) {
-      toast.error("Gagal membagikan");
-    }
-  };
-
   return (
-    <div className="min-h-screen text-foreground relative p-8">
+    <div className="min-h-screen text-foreground relative p-4 sm:p-8">
       <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
       <motion.div
@@ -167,116 +171,140 @@ export default function Home() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-3xl mx-auto"
       >
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 sm:mb-12">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="inline-block bg-primary text-white p-4 rounded-lg retro-border mb-6"
+            className="inline-block bg-primary text-white p-3 sm:p-4 rounded-lg retro-border mb-4 sm:mb-6"
           >
-            <Flame size={48} />
+            <Flame size={32} className="sm:w-12 sm:h-12" />
           </motion.div>
-          <h1 className="text-6xl font-black mb-4 font-mono text-primary animate-pulse">
+          <h1 className="text-4xl font-balsamiq-bold sm:text-6xl font-black mb-2 sm:mb-4 text-primary animate-pulse">
             INSTACOOK🔥
           </h1>
-          <p className="text-2xl font-medium mb-2">
+          <p className="text-xl sm:text-2xl font-medium mb-2 ">
             Roasting pedas dijamin kena mental!💀
           </p>
         </div>
 
-        <Card className="retro-border bg-card p-8">
-          <div className="flex gap-4 mb-8">
+        <Card className="retro-border bg-card p-4 sm:p-8">
+          <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <div className="relative flex-1">
-              <Instagram className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Masukkan username Instagram"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="retro-input pl-12"
+                className="retro-input pl-12 w-full"
               />
             </div>
             <Button
               onClick={handleRoast}
               disabled={loading}
-              className="retro-button"
+              className="retro-button w-full sm:w-auto"
             >
               {loading ? <Loader2 className="animate-spin" /> : "Roasting!"}
             </Button>
           </div>
 
           <div ref={resultRef}>
-            {profileData && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-8 bg-card p-6 rounded-lg retro-border"
-              >
-                <div className="flex items-center gap-6 mb-4">
-                  {profileData.profilePicUrl && (
-                    <div className="relative w-20 h-20 rounded-full border-2 border-white/20 overflow-hidden">
-                      <NextImage
-                        src={profileData.profilePicUrl}
-                        alt={profileData.username}
-                        fill
-                        className="object-cover"
-                        sizes="80px"
-                        priority
-                      />
+            {loading ? (
+              <ProfileSkeleton />
+            ) : (
+              profileData && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-8 bg-card p-6 rounded-lg retro-border"
+                >
+                  <div className="flex items-center gap-6 mb-4">
+                    {profileData.profilePicUrl && (
+                      <div className="relative w-20 h-20 rounded-full border-2 border-white/20 overflow-hidden">
+                        <NextImage
+                          src={profileData.profilePicUrl}
+                          alt={profileData.username}
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                          priority
+                        />
+                      </div>
+                    )}
+                    <div>
+                      <h2 className="text-2xl font-bold flex items-center gap-2">
+                        {profileData.fullName}
+                        {profileData.isVerified && (
+                          <span className="text-blue-400">✓</span>
+                        )}
+                      </h2>
+                      <p className="text-black/60">@{profileData.username}</p>
                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4 mb-4 text-center">
+                    <div className="bg-white/5 p-3 rounded-lg">
+                      <Image className="w-5 h-5 mx-auto mb-1" />
+                      <div className="text-lg font-bold">
+                        {profileData.postsCount}
+                      </div>
+                      <div className="text-sm text-black/60">Post</div>
+                    </div>
+                    <div className="bg-white/5 p-3 rounded-lg">
+                      <Users className="w-5 h-5 mx-auto mb-1" />
+                      <div className="text-lg font-bold">
+                        {profileData.followersCount}
+                      </div>
+                      <div className="text-sm text-black/60">Followers</div>
+                    </div>
+                    <div className="bg-white/5 p-3 rounded-lg">
+                      <Link2 className="w-5 h-5 mx-auto mb-1" />
+                      <div className="text-lg font-bold">
+                        {profileData.followsCount}
+                      </div>
+                      <div className="text-sm text-black/60">Following</div>
+                    </div>
+                  </div>
+
+                  {profileData.biography && (
+                    <p className="text-black/50 whitespace-pre-line">
+                      {profileData.biography}
+                    </p>
                   )}
-                  <div>
-                    <h2 className="text-2xl font-bold flex items-center gap-2">
-                      {profileData.fullName}
-                      {profileData.isVerified && (
-                        <span className="text-blue-400">✓</span>
-                      )}
-                    </h2>
-                    <p className="text-white/60">@{profileData.username}</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4 mb-4 text-center">
-                  <div className="bg-white/5 p-3 rounded-lg">
-                    <Image className="w-5 h-5 mx-auto mb-1" />
-                    <div className="text-lg font-bold">
-                      {profileData.postsCount}
-                    </div>
-                    <div className="text-sm text-white/60">Post</div>
-                  </div>
-                  <div className="bg-white/5 p-3 rounded-lg">
-                    <Users className="w-5 h-5 mx-auto mb-1" />
-                    <div className="text-lg font-bold">
-                      {profileData.followersCount}
-                    </div>
-                    <div className="text-sm text-white/60">Followers</div>
-                  </div>
-                  <div className="bg-white/5 p-3 rounded-lg">
-                    <Link2 className="w-5 h-5 mx-auto mb-1" />
-                    <div className="text-lg font-bold">
-                      {profileData.followingCount}
-                    </div>
-                    <div className="text-sm text-white/60">Following</div>
-                  </div>
-                </div>
-
-                {profileData.biography && (
-                  <p className="text-white/80 whitespace-pre-line">
-                    {profileData.biography}
-                  </p>
-                )}
-              </motion.div>
+                </motion.div>
+              )
             )}
 
-            {roast && (
+            {loading ? (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-card p-6 rounded-lg retro-border"
               >
-                <p className="text-lg leading-relaxed whitespace-pre-line">
-                  {roast}
-                </p>
+                <div className="space-y-3">
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        "h-4 bg-white/10 rounded animate-pulse",
+                        i === 3 && "w-3/4"
+                      )}
+                    />
+                  ))}
+                </div>
               </motion.div>
+            ) : (
+              roast && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-card p-6 rounded-lg retro-border"
+                >
+                  <p className="text-lg leading-relaxed whitespace-pre-line">
+                    {roast}
+                  </p>
+                  <Watermark />
+                </motion.div>
+              )
             )}
           </div>
 
@@ -299,13 +327,6 @@ export default function Home() {
               >
                 <Download className="w-4 h-4 mr-2" />
                 Download
-              </Button>
-              <Button
-                onClick={handleShare}
-                className="retro-button bg-secondary text-secondary-foreground"
-              >
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
               </Button>
             </motion.div>
           )}
