@@ -7,7 +7,7 @@ const API_KEY_2 = process.env.GEMINI_API_KEY_2;
 async function generateRoast(apiKey: string, profileData: any) {
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
+    model: "gemini-3.1-flash-lite",
   });
 
   const generationConfig = {
