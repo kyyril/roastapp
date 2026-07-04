@@ -34,6 +34,8 @@ Format output:
 - Panjang: Maksimal 125 kata
 - Gaya: Sarkastik tapi cerdas
 - Nada: Seperti teman yang sedang roasting
+- PENTING: Jangan gunakan markdown, asterisk, emoji, atau formatting apapun
+- Output HANYA plain text tanpa karakter khusus
 - Hindari: Kata kasar, SARA, atau bullying
 
 Contoh tone roasting:
@@ -48,7 +50,7 @@ Yang harus dihindari:
 - Tidak body shaming
 - Tidak membully
 
-Berikan roasting yang tajam, jenaka, dan menghibur namun tetap dalam batas sopan.`;
+Berikan roasting yang tajam, jenaka, dan menghibur namun tetap dalam batas sopan. Keluarkan HANYA text roasting tanpa markdown atau formatting apapun.`;
 
   const result = await model.generateContent({
     contents: [{ role: "user", parts: [{ text: prompt }] }],
