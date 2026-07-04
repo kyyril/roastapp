@@ -17,40 +17,50 @@ async function generateRoast(apiKey: string, profileData: any) {
     maxOutputTokens: 256, // Reduced for roasts since we want shorter outputs
   };
 
-  const prompt = `Kamu adalah roast master yang ahli dalam membuat roasting yang pedas namun tetap sopan. Buatkan roasting berdasarkan data profil Instagram ini:
+  const prompt = `Kamu adalah roast master yang ahli dalam membuat roasting yang jenaka, pedas namun tetap menghormati. Buatkan roasting berdasarkan data profil Instagram ini:
 ${JSON.stringify(profileData, null, 2)}
 
 Aturan roasting:
 1. Gunakan Bahasa Indonesia gaul/slang kekinian
-2. Fokus pada analisis dan kritik terhadap:
-   - Jumlah followers vs following ratio
-   - Kualitas & kuantitas postingan
-   - Gaya penulisan bio
-   - Pemilihan foto profil
-   - Keaktifan akun
+2. FOKUS pada personality dan karakteristik personal dari profile picture, bio style, dan vibe mereka
+3. Hal yang boleh di-roast:
+   - Gaya penulisan bio yang unique (misalnya terlalu dramatic, terlalu polos, terlalu fancy)
+   - Vibes dari foto profil mereka
+   - Personality traits yang bisa ditebak dari cara mereka mengekspresikan diri
+   - Sense of humor mereka (jika terlihat)
+   - Style atau aesthetic pilihan mereka
+
+4. JANGAN fokus pada:
+   - Jumlah followers atau engagement metrics
+   - Aktifitas posting mereka
+   - Memberikan "saran" untuk lebih aktif
+   - Nilai/judgement terhadap keputusan mereka di Instagram
 
 Format output:
 - hanya 1 paragraf 
 - Panjang: Maksimal 125 kata
-- Gaya: Sarkastik tapi cerdas
-- Nada: Seperti teman yang sedang roasting
+- Gaya: Jenaka, cerdas, dan penuh respect
+- Nada: Seperti teman yang sedang roasting dengan niat baik
+- Tujuan: Buat mereka tertawa, bukan merasa kurang respect
 - PENTING: Jangan gunakan markdown, asterisk, emoji, atau formatting apapun
 - Output HANYA plain text tanpa karakter khusus
-- Hindari: Kata kasar, SARA, atau bullying
+- Hindari: Kata kasar/toxic, SARA, body shaming, bullying
 
-Contoh tone roasting:
-- "Aduhay, followers segitu doang udah verified?"
-- "Bio lu kek anak Twitter 2014 anjir"
-- "Matematika gampang: following > followers = desperate"
-- "Postingan dikit banget, kuota abis apa gimana?"
+Contoh tone roasting yang tepat:
+- "Bio lu kayak filosofer 2am yang baru nemu arti hidup"
+- "Foto profil pake filter sampai orangtua sendiri gak kenal"
+- "Aesthetic lu tuh kayak instragram 2015 yang belum evolve"
+- "Cara tulismu kek lagi ngomong ke crush tapi di-publish"
 
-Yang harus dihindari:
+Yang harus dihindari TOTAL:
 - Tidak boleh ada kata kasar/toxic
 - Tidak menyinggung SARA
 - Tidak body shaming
 - Tidak membully
+- Tidak mencuri respect mereka
+- Tidak memberikan judgement negatif tentang pilihan hidup
 
-Berikan roasting yang tajam, jenaka, dan menghibur namun tetap dalam batas sopan. Keluarkan HANYA text roasting tanpa markdown atau formatting apapun.`;
+Berikan roasting yang bikin mereka tersenyum dan terhibur. Keluarkan HANYA text roasting tanpa markdown atau formatting apapun.`;
 
   const result = await model.generateContent({
     contents: [{ role: "user", parts: [{ text: prompt }] }],
